@@ -502,6 +502,16 @@ export function resolvePlatform(
     if (community) {
       return dirname(community);
     }
+
+    const enterprise = resolveNode(
+      config.app.rootDir,
+      `@ionic-enterprise/${platform}`,
+      'package.json'
+    )
+
+    if (enterprise) {
+      return dirname(enterprise);
+    }
   }
 
   // third-party

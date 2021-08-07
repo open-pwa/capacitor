@@ -9,7 +9,7 @@ import Debug from 'debug';
 import { dirname, extname, join, relative, resolve } from 'path';
 
 import c from './colors';
-import { OS } from './definitions';
+import { OS, WinConfig } from './definitions';
 import type {
   AndroidConfig,
   AppConfig,
@@ -45,6 +45,7 @@ export async function loadConfig(): Promise<Config> {
   const config: Config = {
     android: await loadAndroidConfig(appRootDir, conf.extConfig, cli),
     ios: await loadIOSConfig(appRootDir, conf.extConfig),
+    windows: await loadWindowsConfig(appRootDir, conf.extConfig, cli),
     web: await loadWebConfig(appRootDir, webDir),
     cli,
     app: {
@@ -175,6 +176,7 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
   const androidCordovaPluginsTemplateArchive =
     'capacitor-cordova-android-plugins.tar.gz';
+  const windowsPlatformTemplateArchive = 'windows-template.tar.gz';
 
   return {
     rootDir,
@@ -205,6 +207,13 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
           androidCordovaPluginsTemplateArchive,
         ),
       },
+      windows: {
+        platformTemplateArchive: windowsPlatformTemplateArchive,
+        platformTemplateArchiveAbs: resolve(
+          assetsDirAbs,
+          windowsPlatformTemplateArchive,
+        ),
+      }
     },
     package: await readJSON(resolve(rootDir, 'package.json')),
     os: determineOS(process.platform),
@@ -311,6 +320,55 @@ async function loadIOSConfig(
     webDirAbs,
     podPath,
   };
+}
+
+async function loadWindowsConfig(
+  rootDir: string,
+  extConfig: ExternalConfig,
+  cliConfig: CLIConfig,
+): Promise<WinConfig> {
+  const name = 'windows';
+  const platformDir = extConfig.windows?.path ?? 'windows';
+  const platformDirAbs = resolve(rootDir, platformDir);
+  const appDir = 'app';
+  const srcDir = `${appDir}/src`;
+  const srcMainDir = `${srcDir}/main`;
+  const assetsDir = `${srcMainDir}/assets`;
+  const webDir = `${assetsDir}/public`;
+  const resDir = `${srcMainDir}/res`;
+
+  let apkPath = `${appDir}/build/outputs/apk/`;
+  let flavorPrefix = '';
+  if (extConfig.android?.flavor) {
+    apkPath = `${apkPath}/${extConfig.android?.flavor}`;
+    flavorPrefix = `-${extConfig.android?.flavor}`;
+  }
+
+  const exeName = `app${flavorPrefix}-debug.apk`;
+  const buildOutputDir = `${apkPath}/debug`;
+  const vsPath = lazy(() => determineVisualStudioPath(cliConfig.os));
+  return {
+    name,
+    minVersion: '21',
+    vsPath,
+    exeName,
+    platformDir,
+    platformDirAbs,
+    appDir,
+    appDirAbs: resolve(platformDirAbs, appDir),
+    srcDir,
+    srcDirAbs: resolve(platformDirAbs, srcDir),
+    srcMainDir,
+    srcMainDirAbs: resolve(platformDirAbs, srcMainDir),
+    assetsDir,
+    assetsDirAbs: resolve(platformDirAbs, assetsDir),
+    webDir,
+    webDirAbs: resolve(platformDirAbs, webDir),
+    resDir,
+    resDirAbs: resolve(platformDirAbs, resDir),
+    buildOutputDir,
+    buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
+  }
 }
 
 async function loadWebConfig(
@@ -433,6 +491,28 @@ function determineCocoapodPath(): string {
   }
 
   return 'pod';
+}
+
+async function determineVisualStudioPath(os: OS): Promise<string> {
+  if (process.env.CAPACITOR_VISUAL_STUDIO_PATH) {
+    return process.env.CAPACITOR_VISUAL_STUDIO_PATH;
+  }
+
+  switch (os) {
+    case OS.Windows: {
+      // TODO: Support other versions
+      let p = 'C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\IDE\\devenv.exe'
+
+      if (!(await pathExists(p))) {
+        debug(`Error finding Visual Studio. Please open the project manually`);
+        return '';
+      }
+
+      return p;
+    }
+  }
+
+  return '';
 }
 
 function formatConfigTS(extConfig: ExternalConfig): string {

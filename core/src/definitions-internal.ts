@@ -191,6 +191,11 @@ export interface WindowCapacitor {
   cordova?: {
     fireDocumentEvent?: (eventName: string, eventData: any) => void;
   };
+  chrome?: {
+    webview?: {
+      postMessage(data: any): void;
+    }
+  }
   dispatchEvent?: any;
   document?: any;
   navigator?: {

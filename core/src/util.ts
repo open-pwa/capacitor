@@ -27,11 +27,13 @@ export class CapacitorException extends Error {
 
 export const getPlatformId = (
   win: WindowCapacitor,
-): 'android' | 'ios' | 'web' => {
+): 'android' | 'ios' | 'web' | 'windows' => {
   if (win?.androidBridge) {
     return 'android';
   } else if (win?.webkit?.messageHandlers?.bridge) {
     return 'ios';
+  } else if (win?.chrome?.webview) {
+    return 'windows';
   } else {
     return 'web';
   }

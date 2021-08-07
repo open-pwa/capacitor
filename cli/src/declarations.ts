@@ -348,6 +348,16 @@ export interface CapacitorConfig {
     limitsNavigationsToAppBoundDomains?: boolean;
   };
 
+  windows?: {
+    /**
+     * Specify a custom path to the native Windows project.
+     *
+     * @since 4.0.0
+     * @default windows
+     */
+    path?: string
+  };
+
   server?: {
     /**
      * Configure the local hostname of the device.

@@ -16,11 +16,13 @@ import type {
 let dummy = {};
 
 const initBridge = (w: any): void => {
-  const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' => {
+  const getPlatformId = (win: WindowCapacitor): 'android' | 'ios' | 'web' | 'windows' => {
     if (win?.androidBridge) {
       return 'android';
     } else if (win?.webkit?.messageHandlers?.bridge) {
       return 'ios';
+    } else if (win?.chrome?.webview) {
+      return 'windows';
     } else {
       return 'web';
     }
@@ -391,6 +393,15 @@ const initBridge = (w: any): void => {
         try {
           data.type = data.type ? data.type : 'message';
           win.webkit.messageHandlers.bridge.postMessage(data);
+        } catch (e) {
+          win?.console?.error(e);
+        }
+      };
+    } else if (getPlatformId(win) === 'windows') {
+      postToNative = data => {
+        try {
+          data.type = data.type ? data.type : 'message';
+          win.chrome.webview.postMessage(data);
         } catch (e) {
           win?.console?.error(e);
         }
