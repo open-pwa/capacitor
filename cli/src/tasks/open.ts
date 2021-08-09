@@ -11,6 +11,7 @@ import {
 import type { Config } from '../definitions';
 import { fatal, isFatal } from '../errors';
 import { openIOS } from '../ios/open';
+import { openWindows } from '../windows/open';
 import { logger } from '../log';
 
 export async function openCommand(
@@ -70,6 +71,8 @@ export async function open(
     });
   } else if (platformName === config.android.name) {
     return openAndroid(config);
+  } else if (platformName === config.windows.name) {
+    return openWindows(config);
   } else if (platformName === config.web.name) {
     return Promise.resolve();
   } else {

@@ -29,6 +29,9 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
+import {
+  checkWindowsPackage
+} from '../windows/common';
 import { logger, logSuccess, output } from '../log';
 
 import { sync } from './sync';
@@ -131,6 +134,8 @@ function addChecks(config: Config, platformName: string): CheckFunction[] {
     return [() => checkIOSPackage(config), () => checkCocoaPods(config)];
   } else if (platformName === config.android.name) {
     return [() => checkAndroidPackage(config)];
+  } else if (platformName === config.windows.name) {
+    return [() => checkWindowsPackage(config)];
   } else if (platformName === config.web.name) {
     return [];
   } else {

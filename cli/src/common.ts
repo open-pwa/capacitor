@@ -218,9 +218,11 @@ export async function getCapacitorPackage(
   config: Config,
   name: string,
 ): Promise<PackageJson | null> {
+  const packageName = name === 'windows' ? `@ionic-enterprise/capacitor-windows` : `@capacitor/${name}`;
+
   const packagePath = resolveNode(
     config.app.rootDir,
-    `@capacitor/${name}`,
+    packageName,
     'package.json',
   );
 
@@ -267,6 +269,8 @@ function getPlatformDirectory(config: Config, platform: string): string | null {
       return config.android.platformDirAbs;
     case 'ios':
       return config.ios.platformDirAbs;
+    case 'windows':
+      return config.windows.platformDirAbs;
     case 'web':
       return config.web.platformDirAbs;
   }
@@ -324,7 +328,7 @@ export async function selectPlatforms(
 }
 
 export async function getKnownPlatforms(): Promise<string[]> {
-  return ['web', 'android', 'ios'];
+  return ['web', 'android', 'ios', 'windows'];
 }
 
 export async function isValidPlatform(platform: string): Promise<boolean> {
@@ -505,7 +509,7 @@ export function resolvePlatform(
 
     const enterprise = resolveNode(
       config.app.rootDir,
-      `@ionic-enterprise/${platform}`,
+      `@ionic-enterprise/capacitor-${platform}`,
       'package.json'
     )
 
