@@ -10,14 +10,15 @@ const debug = Debug('capacitor:android:open');
 
 export async function openWindows(config: Config): Promise<void> {
   const vsPath = await config.windows.vsPath;
-  const dir = config.windows.platformDirAbs;
+
+  const solution = config.windows.nativeVSSolutionAbs
 
   try {
     if (!(await pathExists(vsPath))) {
       throw new Error(`Visual Studio does not exist at: ${vsPath}`);
     }
 
-    await open(dir, { app: vsPath, wait: false });
+    await open(solution, { app: vsPath, wait: false });
     logger.info(
       `Opening Visual Studio project at: ${c.strong(config.windows.platformDir)}.`,
     );

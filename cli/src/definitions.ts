@@ -46,7 +46,7 @@ export interface CLIConfig {
   readonly assets: {
     readonly ios: PlatformAssetsConfig;
     readonly android: PlatformAssetsConfig;
-    readonly windows: Pick<PlatformAssetsConfig, 'platformTemplateArchive' | 'platformTemplateArchiveAbs'>;
+    readonly windows?: Pick<PlatformAssetsConfig, 'platformTemplateArchive' | 'platformTemplateArchiveAbs'>;
   };
   readonly package: PackageJson;
   readonly os: OS;
@@ -123,12 +123,12 @@ export interface WinConfig extends PlatformConfig {
   readonly srcMainDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
-  readonly assetsDir: string;
-  readonly assetsDirAbs: string;
-  readonly resDir: string;
-  readonly resDirAbs: string;
-  readonly buildOutputDir: string;
-  readonly buildOutputDirAbs: string;
+  readonly nativeProjectDir: string;
+  readonly nativeProjectDirAbs: string;
+  readonly nativeTargetDir: string;
+  readonly nativeTargetDirAbs: string;
+  readonly nativeVSSolution: string;
+  readonly nativeVSSolutionAbs: string;
 }
 
 export type WebConfig = PlatformConfig;

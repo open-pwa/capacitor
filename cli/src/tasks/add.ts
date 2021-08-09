@@ -29,6 +29,7 @@ import {
   checkIOSPackage,
   checkCocoaPods,
 } from '../ios/common';
+import { addWindows } from '../windows/add';
 import {
   checkWindowsPackage
 } from '../windows/common';
@@ -149,6 +150,8 @@ async function doAdd(config: Config, platformName: string): Promise<void> {
       await addIOS(config);
     } else if (platformName === config.android.name) {
       await addAndroid(config);
+    } else if (platformName === config.windows.name) {
+      await addWindows(config);
     }
   });
 }

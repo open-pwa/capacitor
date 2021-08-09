@@ -176,7 +176,6 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
   const androidPlatformTemplateArchive = 'android-template.tar.gz';
   const androidCordovaPluginsTemplateArchive =
     'capacitor-cordova-android-plugins.tar.gz';
-  const windowsPlatformTemplateArchive = 'windows-template.tar.gz';
 
   return {
     rootDir,
@@ -205,13 +204,6 @@ async function loadCLIConfig(rootDir: string): Promise<CLIConfig> {
         cordovaPluginsTemplateArchiveAbs: resolve(
           assetsDirAbs,
           androidCordovaPluginsTemplateArchive,
-        ),
-      },
-      windows: {
-        platformTemplateArchive: windowsPlatformTemplateArchive,
-        platformTemplateArchiveAbs: resolve(
-          assetsDirAbs,
-          windowsPlatformTemplateArchive,
         ),
       }
     },
@@ -337,15 +329,15 @@ async function loadWindowsConfig(
   const webDir = `${assetsDir}/public`;
   const resDir = `${srcMainDir}/res`;
 
-  let apkPath = `${appDir}/build/outputs/apk/`;
-  let flavorPrefix = '';
-  if (extConfig.android?.flavor) {
-    apkPath = `${apkPath}/${extConfig.android?.flavor}`;
-    flavorPrefix = `-${extConfig.android?.flavor}`;
-  }
+  const nativeProjectDir = 'App';
+  const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
+  const nativeTargetDir = `${nativeProjectDir}/App`;
+  const nativeTargetDirAbs = resolve(platformDirAbs, nativeTargetDir);
+  const nativeVSSolution = `${nativeProjectDir}/App.sln`;
+  const nativeVSSolutionDirAbs = resolve(platformDirAbs, nativeVSSolution);
 
-  const exeName = `app${flavorPrefix}-debug.apk`;
-  const buildOutputDir = `${apkPath}/debug`;
+  const exeName = `App.exe`;
+
   const vsPath = lazy(() => determineVisualStudioPath(cliConfig.os));
   return {
     name,
@@ -360,14 +352,14 @@ async function loadWindowsConfig(
     srcDirAbs: resolve(platformDirAbs, srcDir),
     srcMainDir,
     srcMainDirAbs: resolve(platformDirAbs, srcMainDir),
-    assetsDir,
-    assetsDirAbs: resolve(platformDirAbs, assetsDir),
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
-    resDir,
-    resDirAbs: resolve(platformDirAbs, resDir),
-    buildOutputDir,
-    buildOutputDirAbs: resolve(platformDirAbs, buildOutputDir),
+    nativeProjectDir: nativeProjectDir,
+    nativeProjectDirAbs: nativeProjectDirAbs,
+    nativeTargetDir: nativeTargetDir,
+    nativeTargetDirAbs: nativeTargetDirAbs,
+    nativeVSSolution: nativeVSSolution,
+    nativeVSSolutionAbs: nativeVSSolutionDirAbs
   }
 }
 

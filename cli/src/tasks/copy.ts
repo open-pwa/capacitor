@@ -83,7 +83,7 @@ export async function copy(
       await writeCordovaAndroidManifest(cordovaPlugins, config, platformName);
     } else if (platformName === config.windows.name) {
       await copyWebDir(config, config.windows.webDirAbs);
-      await copyCapacitorConfig(config, config.windows.assetsDirAbs);
+      await copyCapacitorConfig(config, config.windows.nativeTargetDirAbs);
     } else if (platformName === config.web.name) {
       await copyWeb(config);
     } else {
