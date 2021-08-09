@@ -322,8 +322,8 @@ async function loadWindowsConfig(
   const name = 'windows';
   const platformDir = extConfig.windows?.path ?? 'windows';
   const platformDirAbs = resolve(rootDir, platformDir);
-  const appDir = 'app';
-  const webDir = `${appDir}/Public`;
+  const appDir = 'App';
+  const webDir = join(appDir, 'App', 'App (Package)', 'Public');
 
   const nativeProjectDir = 'App';
   const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
