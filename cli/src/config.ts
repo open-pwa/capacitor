@@ -323,11 +323,7 @@ async function loadWindowsConfig(
   const platformDir = extConfig.windows?.path ?? 'windows';
   const platformDirAbs = resolve(rootDir, platformDir);
   const appDir = 'app';
-  const srcDir = `${appDir}/src`;
-  const srcMainDir = `${srcDir}/main`;
-  const assetsDir = `${srcMainDir}/assets`;
-  const webDir = `${assetsDir}/public`;
-  const resDir = `${srcMainDir}/res`;
+  const webDir = `${appDir}/Public`;
 
   const nativeProjectDir = 'App';
   const nativeProjectDirAbs = resolve(platformDirAbs, nativeProjectDir);
@@ -348,10 +344,6 @@ async function loadWindowsConfig(
     platformDirAbs,
     appDir,
     appDirAbs: resolve(platformDirAbs, appDir),
-    srcDir,
-    srcDirAbs: resolve(platformDirAbs, srcDir),
-    srcMainDir,
-    srcMainDirAbs: resolve(platformDirAbs, srcMainDir),
     webDir,
     webDirAbs: resolve(platformDirAbs, webDir),
     nativeProjectDir: nativeProjectDir,

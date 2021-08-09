@@ -117,10 +117,6 @@ export interface WinConfig extends PlatformConfig {
   readonly minVersion: string;
   readonly appDir: string;
   readonly appDirAbs: string;
-  readonly srcDir: string;
-  readonly srcDirAbs: string;
-  readonly srcMainDir: string;
-  readonly srcMainDirAbs: string;
   readonly webDir: string;
   readonly webDirAbs: string;
   readonly nativeProjectDir: string;
