@@ -10,12 +10,15 @@ const nativeBridge = (function (exports) {
     let dummy = {};
     const initBridge = (w) => {
         const getPlatformId = (win) => {
-            var _a, _b;
+            var _a, _b, _c;
             if (win === null || win === void 0 ? void 0 : win.androidBridge) {
                 return 'android';
             }
             else if ((_b = (_a = win === null || win === void 0 ? void 0 : win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
                 return 'ios';
+            }
+            else if ((_c = win === null || win === void 0 ? void 0 : win.chrome) === null || _c === void 0 ? void 0 : _c.webview) {
+                return 'windows';
             }
             else {
                 return 'web';
@@ -171,7 +174,10 @@ const nativeBridge = (function (exports) {
             const seen = new Set();
             return JSON.stringify(value, (_k, v) => {
                 if (seen.has(v)) {
-                    return '...';
+                    if (v === null)
+                        return null;
+                    else
+                        return '...';
                 }
                 if (typeof v === 'object') {
                     seen.add(v);
@@ -331,6 +337,18 @@ const nativeBridge = (function (exports) {
                     try {
                         data.type = data.type ? data.type : 'message';
                         win.webkit.messageHandlers.bridge.postMessage(data);
+                    }
+                    catch (e) {
+                        (_a = win === null || win === void 0 ? void 0 : win.console) === null || _a === void 0 ? void 0 : _a.error(e);
+                    }
+                };
+            }
+            else if (getPlatformId(win) === 'windows') {
+                postToNative = data => {
+                    var _a;
+                    try {
+                        data.type = data.type ? data.type : 'message';
+                        win.chrome.webview.postMessage(data);
                     }
                     catch (e) {
                         (_a = win === null || win === void 0 ? void 0 : win.console) === null || _a === void 0 ? void 0 : _a.error(e);

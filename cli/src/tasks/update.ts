@@ -71,6 +71,8 @@ export function updateChecks(
       continue;
     } else if (platformName === config.web.name) {
       continue;
+    } else if (platformName === config.windows.name) {
+      continue;
     } else {
       throw `Platform ${platformName} is not valid.`;
     }

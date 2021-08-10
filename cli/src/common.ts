@@ -452,6 +452,10 @@ export async function getAddedPlatforms(config: Config): Promise<string[]> {
     platforms.push(config.ios.name);
   }
 
+  if (await getProjectPlatformDirectory(config, config.windows.name)) {
+    platforms.push(config.windows.name);
+  }
+  
   platforms.push(config.web.name);
 
   return platforms;
