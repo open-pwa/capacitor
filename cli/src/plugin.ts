@@ -21,6 +21,9 @@ export interface PluginManifest {
   readonly android?: {
     readonly src?: string;
   };
+  readonly windows?: {
+    readonly src?: string;
+  };
 }
 
 export interface Plugin {
@@ -37,6 +40,11 @@ export interface Plugin {
     path: string;
   };
   android?: {
+    type: PluginType;
+    path: string;
+  };
+  windows?: {
+    name: string;
     type: PluginType;
     path: string;
   };
