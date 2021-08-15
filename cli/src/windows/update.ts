@@ -1,5 +1,5 @@
 import {
-pathExists, realpath,
+pathExists, realpath, writeFile,
 } from '@ionic/utils-fs';
 import { dirname, join, relative, resolve } from 'path';
 
@@ -19,7 +19,7 @@ import type { Plugin } from '../plugin';
 import { copy as copyTask } from '../tasks/copy';
 
 import { getWindowsPlugins } from './common';
-import { readXML } from '../util/xml';
+import { readXML, writeXML } from '../util/xml';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { fatal } from '../errors';
@@ -77,25 +77,27 @@ async function updateNugetConfig(config: Config, plugins: Plugin[]) {
 
     const nugetConfigPath = resolve(config.windows.nativeProjectDirAbs, 'nuget.config');
     const nugetConfigXml = await readXML(nugetConfigPath);
-    console.log('Loaded nugetConfigXml', nugetConfigPath);
     const packageSources = nugetConfigXml.configuration.packageSources;
 
-    const nugetConfigDir = config.windows.nativeProjectDirAbs;
-    const relativeCapacitorWindowsPath = convertToUnixPath(
-        relative(nugetConfigDir, await realpath(dirname(capacitorWindowsPath))),
-    );
-
     await Promise.all(plugins.map(async plugin => {
-        console.log(await realpath(plugin.rootPath));
-        packageSources.push({
-            add: {
-                $: {
-                    key: plugin.name,
-                    value: relative(nugetConfigPath, join(await realpath(plugin.rootPath), 'windows/Plugin'))
-                }
-            }
-        });
+        console.log(plugin.rootPath, await realpath(plugin.rootPath));
+
+        const key = `capacitor-${plugin.name}`;
+        const value = relative(config.windows.nativeProjectDirAbs, join(await realpath(plugin.rootPath), 'windows/Plugin'));
+
+        if (!alreadyRegistered(packageSources, key, value)) {
+            packageSources[0].add.push({
+                $: { key, value }
+            });
+        }
     }));
 
-    console.log('New package sources', JSON.stringify(packageSources, null, 2));
+
+    const newXml = await writeXML(nugetConfigXml);
+
+    await writeFile(nugetConfigPath, newXml);
+}
+
+const alreadyRegistered = (packageSources: any, key: string, value: string) => {
+    return !!packageSources[0].add.find((a: any) => a.$.key === key && a.$.value === value);
 }
