@@ -99,7 +99,7 @@ export async function update(
     } else if (platformName === config.android.name) {
       await updateAndroid(config);
     } else if (platformName === config.windows.name) {
-      await updateWindows(config, deployment);
+      await updateWindows(config);
     }
 
     await runPlatformHook(

@@ -16,7 +16,7 @@ export async function getWindowsPlugins(allPlugins: Plugin[]): Promise<Plugin[]>
 }
 
 export async function resolveWindowsPlugin(plugin: Plugin): Promise<Plugin | null> {
-  const platform = 'ios';
+  const platform = 'windows';
   if (plugin.manifest?.windows) {
     plugin.windows = {
       name: plugin.name,
