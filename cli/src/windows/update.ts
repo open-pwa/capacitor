@@ -95,7 +95,7 @@ async function updateNugetConfig(config: Config, plugins: Plugin[]) {
         console.log(plugin.rootPath, await realpath(plugin.rootPath));
 
         const key = `capacitor-${plugin.name}`;
-        const value = relative(config.windows.nativeProjectDirAbs, join(await realpath(plugin.rootPath), 'windows/Plugin'));
+        const value = relative(config.windows.nativeProjectDirAbs, join(await realpath(plugin.rootPath), 'windows'));
 
         if (!alreadyRegistered(packageSources, key, value)) {
             packageSources[0].add.push({
