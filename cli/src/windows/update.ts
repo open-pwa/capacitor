@@ -1,7 +1,7 @@
 import {
-pathExists, realpath, writeFile,
+pathExists, readdirp, realpath, writeFile,
 } from '@ionic/utils-fs';
-import { dirname, join, relative, resolve } from 'path';
+import { basename, extname, join, relative, resolve, parse } from 'path';
 
 import c from '../colors';
 import { checkPlatformVersions, runTask } from '../common';
@@ -23,6 +23,7 @@ import { readXML, writeXML } from '../util/xml';
 import { convertToUnixPath } from '../util/fs';
 import { resolveNode } from '../util/node';
 import { fatal } from '../errors';
+import { runCommand } from '../util/subprocess';
   
 const platform = 'windows'
 export async function updateWindows(
@@ -41,7 +42,7 @@ export async function updateWindows(
     }
     await checkPluginDependencies(plugins, platform);
     await installNugetPackages(config, plugins);
-
+    
     await checkPlatformVersions(config, platform);
 }
 
@@ -57,9 +58,20 @@ async function installNugetPackages(config: Config, plugins: Plugin[]) {
     await runTask(
       `Updating Windows native dependencies`,
       () => {
-        return updateNugetConfig(config, plugins);
+        return Promise.all([
+            updateNugetConfig(config, plugins),
+            registerNugetDependencies(config, plugins),
+            runCommand(
+                'dotnet',
+                ['restore'],
+                {
+                cwd: config.windows.nativeProjectDirAbs,
+                },
+            )
+        ])
       },
     );
+
 }
 
 async function updateNugetConfig(config: Config, plugins: Plugin[]) {
@@ -100,4 +112,36 @@ async function updateNugetConfig(config: Config, plugins: Plugin[]) {
 
 const alreadyRegistered = (packageSources: any, key: string, value: string) => {
     return !!packageSources[0].add.find((a: any) => a.$.key === key && a.$.value === value);
+}
+
+async function registerNugetDependencies(config: Config, plugins: Plugin[]) {
+    Promise.all(plugins.map(async plugin => {
+        const pluginPath = await realpath(plugin.rootPath);
+
+        const nupkgFiles = await readdirp(pluginPath, {
+            filter: entry =>
+            !entry.stats.isDirectory() &&
+            ['.nupkg'].includes(extname(entry.path)),
+        });
+
+        if (!nupkgFiles.length) {
+            return;
+        }
+
+        const pkgFilename = parse(nupkgFiles[0]).name;
+        const pkgName = pkgFilename.split('.')[0];
+
+        // Find the .nupkg in the plugin root
+        console.log('Installing nupkg', pkgName);
+
+        runCommand(
+            'dotnet',
+            ['add', 'package', pkgName],
+            {
+            cwd: join(config.windows.nativeProjectDirAbs, 'App', 'App'),
+            },
+        )
+        // Take the name of the package to be the name of the dep
+        // run dotnet add PackageName
+    }));
 }
