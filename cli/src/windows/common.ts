@@ -8,14 +8,18 @@ export async function checkWindowsPackage(
   return checkCapacitorPlatform(config, 'windows');
 }
 
-export async function getWindowsPlugins(allPlugins: Plugin[]): Promise<Plugin[]> {
+export async function getWindowsPlugins(
+  allPlugins: Plugin[],
+): Promise<Plugin[]> {
   const resolved = await Promise.all(
     allPlugins.map(async plugin => await resolveWindowsPlugin(plugin)),
   );
   return resolved.filter((plugin): plugin is Plugin => !!plugin);
 }
 
-export async function resolveWindowsPlugin(plugin: Plugin): Promise<Plugin | null> {
+export async function resolveWindowsPlugin(
+  plugin: Plugin,
+): Promise<Plugin | null> {
   const platform = 'windows';
   if (plugin.manifest?.windows) {
     plugin.windows = {

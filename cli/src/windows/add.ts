@@ -14,11 +14,15 @@ export async function addWindows(config: Config): Promise<void> {
   );
 
   if (!capacitorWindowsTemplatePath) {
-    fatal(`Unable to load windows platform template. Ensure @ionic-enterprise/capacitor-windows is installed`);
+    fatal(
+      `Unable to load windows platform template. Ensure @ionic-enterprise/capacitor-windows is installed`,
+    );
   }
 
   await runTask(
-    `Adding native Windows project in ${c.strong(config.windows.platformDir)} - ${capacitorWindowsTemplatePath}`,
+    `Adding native Windows project in ${c.strong(
+      config.windows.platformDir,
+    )} - ${capacitorWindowsTemplatePath}`,
     () => {
       return extractTemplate(
         capacitorWindowsTemplatePath,
