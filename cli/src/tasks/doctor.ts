@@ -1,10 +1,11 @@
 import { readJSON } from '@ionic/utils-fs';
 
 import { doctorAndroid } from '../android/doctor';
+import { doctorIOS } from '../ios/doctor';
+import { doctorWindows } from '../windows/doctor';
 import c from '../colors';
 import { selectPlatforms } from '../common';
 import type { Config } from '../definitions';
-import { doctorIOS } from '../ios/doctor';
 import { output } from '../log';
 import { emoji as _e } from '../util/emoji';
 import { resolveNode } from '../util/node';
@@ -89,6 +90,8 @@ export async function doctor(
     await doctorIOS(config);
   } else if (platformName === config.android.name) {
     await doctorAndroid(config);
+  } else if (platformName === config.windows.name) {
+    await doctorWindows(config);
   } else if (platformName === config.web.name) {
     return Promise.resolve();
   } else {
