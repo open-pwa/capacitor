@@ -23,6 +23,7 @@ export interface PluginManifest {
   };
   readonly windows?: {
     readonly src?: string;
+    readonly assembly?: string;
   };
 }
 
@@ -46,6 +47,7 @@ export interface Plugin {
   windows?: {
     name: string;
     type: PluginType;
+    assembly: string;
     path: string;
   };
 }
@@ -207,6 +209,8 @@ export function getPluginType(p: Plugin, platform: string): PluginType {
       return p.ios?.type ?? PluginType.Core;
     case 'android':
       return p.android?.type ?? PluginType.Core;
+    case 'windows':
+      return p.windows?.type ?? PluginType.Core;
   }
 
   return PluginType.Core;

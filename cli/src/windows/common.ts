@@ -25,6 +25,7 @@ export async function resolveWindowsPlugin(
     plugin.windows = {
       name: plugin.name,
       type: PluginType.Core,
+      assembly: plugin.manifest.windows.assembly ?? '',
       path: plugin.manifest.windows.src ?? platform,
     };
   } else {
